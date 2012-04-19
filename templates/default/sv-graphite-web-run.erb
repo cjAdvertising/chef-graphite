@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /opt/graphite/webapp/graphite
+
+exec 2>&1
+exec chpst -u <%= node["graphite"]["user"] %>:<%= node["graphite"]["group"] %> gunicorn_django -b unix:<%= node["graphite"]["web"]["socket"] %>

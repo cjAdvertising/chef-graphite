@@ -1,0 +1,4 @@
+check process <%= @name %>
+    with pidfile "/etc/sv/<%= @name %>/supervise/pid"
+    start program = "/usr/bin/sv start <%= @name %>"
+    stop program = "/usr/bin/sv stop <%= @name %>"
