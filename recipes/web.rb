@@ -72,7 +72,7 @@ execute "graphite web sync db" do
 end
 
 execute "set admin password" do
-  command "/opt/graphite/bin/set_admin_passwd.py root #{node["graphite"]["web"]["password"]}"
+  command "/opt/graphite/bin/set_admin_passwd.py root #{node["graphite"]["web"]["admin_password"]}"
   user node["graphite"]["user"]
   group node["graphite"]["group"]
   action :nothing
@@ -90,6 +90,16 @@ template "#{node["nginx"]["dir"]}/sites-available/#{node["graphite"]["web"]["url
   owner "root"
   group "root"
   mode "0644"
+  notifies :restart, "service[nginx]"
+end
+
+unless node["graphite"]["web"]["auth_users"].nil?
+  template "#{node["nginx"]["dir"]}/graphite_htpasswd" do
+    source "htpasswd.erb"
+    owner "root"
+    group "root"
+    mode "0644"
+  end
 end
 
 # Enable nginx site

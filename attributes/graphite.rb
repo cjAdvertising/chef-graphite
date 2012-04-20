@@ -31,9 +31,10 @@ default[:graphite][:whisper][:version] = "0.9.9"
 
 default[:graphite][:web][:version] = "0.9.9"
 default[:graphite][:web][:port] = "80"
-default[:graphite][:web][:password] = "changeme"
 default[:graphite][:web][:url] = "graphite"
 default[:graphite][:web][:socket] = "/opt/graphite/storage/gunicorn.sock"
+default[:graphite][:web][:admin_password] = "changeme"
+default[:graphite][:web][:auth_users] = nil
 
 default[:graphite][:carbon][:version] = "0.9.9"
 default[:graphite][:carbon][:line_receiver_interface] = "127.0.0.1"

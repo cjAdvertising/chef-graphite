@@ -19,5 +19,10 @@ server {
       proxy_pass http://graphite_gunicorn;
       break;
     }
+
+    <% unless node["graphite"]["web"]["auth_users"].nil? %>
+    auth_basic            "Restricted";
+    auth_basic_user_file  graphite_htpasswd;
+    <% end %>
   }
 }
