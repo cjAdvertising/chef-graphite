@@ -3,8 +3,13 @@ upstream graphite_gunicorn {
 }
 
 server {
-  listen <%= node["graphite"]["web"]["port"] %>;
+  listen <%= node["graphite"]["web"]["port"] %><% if node["graphite"]["web"]["ssl"] %> ssl<% end %>;
   server_name <%= node["graphite"]["web"]["url"] %>;
+
+  <% if node["graphite"]["web"]["ssl"] %>
+  ssl_certificate      <%= node["graphite"]["web"]["ssl_cert"] %>;
+  ssl_certificate_key  <%= node["graphite"]["web"]["ssl_key"] %>;
+  <% end %>
 
   access_log /var/log/nginx/<%= node["graphite"]["web"]["url"] %>.access.log;
 
