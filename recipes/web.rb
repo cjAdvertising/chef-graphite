@@ -62,20 +62,33 @@ cookbook_file "/opt/graphite/bin/set_admin_passwd.py" do
   mode "0755"
 end
 
-execute "graphite web sync db" do
+execute "graphite-web-sync-db" do
   command "python manage.py syncdb --noinput"
   user node["graphite"]["user"]
   group node["graphite"]["group"]
   cwd "/opt/graphite/webapp/graphite"
   creates "/opt/graphite/storage/graphite.db"
-  notifies :run, "execute[set admin password]"
 end
 
-execute "set admin password" do
-  command "/opt/graphite/bin/set_admin_passwd.py root #{node["graphite"]["web"]["admin_password"]}"
-  user node["graphite"]["user"]
-  group node["graphite"]["group"]
-  action :nothing
+node["graphite"]["web"]["super_users"].each do |u, info|
+
+  execute "create-#{u}-user" do
+    command "python manage.py createsuperuser --username='#{u}' --email='#{info["email"]}' --noinput"
+    user node["graphite"]["user"]
+    group node["graphite"]["group"]
+    cwd "/opt/graphite/webapp/graphite"
+    action :nothing
+    subscribes :run, resources(:execute => "graphite-web-sync-db"), :immediately
+  end
+
+  execute "set-#{u}-password" do
+    command "/opt/graphite/bin/set_admin_passwd.py '#{u}' '#{info["pass"]}'"
+    user node["graphite"]["user"]
+    group node["graphite"]["group"]
+    action :nothing
+    subscribes :run, resources(:execute => "create-#{u}-user"), :immediately
+  end
+
 end
 
 file "/opt/graphite/storage/graphite.db" do

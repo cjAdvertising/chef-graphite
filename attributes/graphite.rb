@@ -33,7 +33,9 @@ default[:graphite][:web][:version] = "0.9.9"
 default[:graphite][:web][:port] = "80"
 default[:graphite][:web][:url] = "graphite"
 default[:graphite][:web][:socket] = "/opt/graphite/storage/gunicorn.sock"
-default[:graphite][:web][:admin_password] = "changeme"
+
+default[:graphite][:web][:super_users] = {:admin => {:email => "me@example.com", :pass => "changeme"}}
+
 default[:graphite][:web][:auth_users] = nil
 default[:graphite][:web][:ssl] = true
 default[:graphite][:web][:ssl_cert] = "/opt/graphite/ssl.crt"
